@@ -1,0 +1,225 @@
+public class Pessoa {
+	private String nome;
+	private LocalDate dataNascimento;
+}
+
+public class Funcionario extends Pessoa {
+	private BigDecimal salario;
+	private String funcao;
+}
+
+public Funcionario (String nome, LocalDate dataNascimento, BigDecimal salario, String funcao) {
+	this.nome = nome;
+	this.dataNascimento = dataNascimento;
+	this.salario = salario;
+	this.funcao = funcao;
+}
+
+public static void main(String[] args) {
+	List<Funcionario> listaFuncionarios = new ArrayList<>();
+
+	inserirFuncionarios(listaFuncionarios, "Maria", new Date(18/10/2000), 2009.44, "Operador");
+	inserirFuncionarios(listaFuncionarios, "João", new Date(12/05/1990), 2284.38, "Operador");
+	inserirFuncionarios(listaFuncionarios, "Caio", new Date(02/05/1961), 9836.14, "Coordenador");
+	inserirFuncionarios(listaFuncionarios, "Miguel", new Date(14/10/1988), 19119.88, "Diretor");
+	inserirFuncionarios(listaFuncionarios, "Alice", new Date(05/01/1995), 2234.68, "Recepcionista");
+	inserirFuncionarios(listaFuncionarios, "Heitor", new Date(19/11/1999), 1582.72, "Operador");
+	inserirFuncionarios(listaFuncionarios, "Arthur", new Date(31/03/1993), 4071.84, "Contador");
+	inserirFuncionarios(listaFuncionarios, "Laura", new Date(08/07/1994), 3017.45, "Gerente");
+	inserirFuncionarios(listaFuncionarios, "Heloísa", new Date(24/05/2003), 1606.85, "Eletricista");
+	inserirFuncionarios(listaFuncionarios, "Helena", new Date(02/09/1996), 2799.93, "Gerente");
+
+	removerFuncionarios(listaFuncionarios, "João");
+
+	System.out.println("\nLista de funcionários após demissão do João:");
+	exibirFuncionarios(listaFuncionarios);
+
+	//Exibir aumento dos funcionarios
+	aumentoSalario(listaFuncionarios, "Maria", 200.94);
+	aumentoSalario(listaFuncionarios, "Caio", 983.61);
+	aumentoSalario(listaFuncionarios, "Miguel", 1911.98);
+	aumentoSalario(listaFuncionarios, "Alice", 223.46);
+	aumentoSalario(listaFuncionarios, "Heitor", 158.27);
+	aumentoSalario(listaFuncionarios, "Arthur", 407.18);
+	aumentoSalario(listaFuncionarios, "Laura", 301.74);
+	aumentoSalario(listaFuncionarios, "Heloísa", 160.68);
+	aumentoSalario(listaFuncionarios, "Helena", 279.99);
+
+	System.out.println("\nLista de funcionários após o aumento de salário:");
+	exibirFuncionarios(listaFuncionarios);
+	
+	//Exibir funcionarios no Map
+	Map<String, List<Funcionario>> funcionariosFuncao = agruparFuncionario(listaFuncionarios);
+
+	for (Map.Entry<String, List<Funcionario>> entry : funcionariosFuncao.entrySet()) {
+            System.out.println("Função: " + entry.getKey());
+            List<Funcionario> funcionarios = entry.getValue();
+            for (Funcionario funcionario : funcionarios) {
+                System.out.println("- Nome: " + funcionario.getNome());
+                System.out.println("  Salário: R$" + funcionario.getSalario());
+            }
+            System.out.println();
+        }
+	
+	//Exibir funcionarios que fazem aniversário nos meses 10 e 12
+	System.out.println("Funcionários que fazem aniversário em Outubro (mês 10) e Dezembro (mês 12):");
+        funcionariosAniversariantes(listaFuncionarios, 10, 12);
+
+	//Exibir funcionário mais velho
+	if (funcionarioMaisVelho != null) {
+            System.out.println("Funcionário com a maior idade:");
+            System.out.println("Nome: " + funcionarioMaisVelho.getNome());
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            System.out.println("Data de Nascimento: " + sdf.format(funcionarioMaisVelho.getDataNascimento()));
+        } else {
+            System.out.println("Não há funcionários na lista.");
+        }
+
+	// Ordenar a lista de funcionários por ordem alfabética
+        Collections.sort(listaFuncionarios, new Comparator<Funcionario>() {
+            @Override
+            public int compare(Funcionario f1, Funcionario f2) {
+                return f1.getNome().compareTo(f2.getNome());
+            }
+        });
+
+        System.out.println("Lista de funcionários em ordem alfabética:");
+        exibirFuncionarios(listaFuncionarios);
+
+	// Calcular a soma dos salários
+        BigDecimal somaSalarios = calcularSomaSalarios(listaFuncionarios);
+
+        DecimalFormat df = new DecimalFormat("#.###,##");
+        System.out.println("Soma dos salários de todos os funcionários: R$" + df.format(somaSalarios));
+
+	// Valor do salário mínimo
+        BigDecimal salarioMinimo = 1212.00;
+
+        // Exibir quantos salários mínimos cada funcionário ganha
+        DecimalFormat df = new DecimalFormat("#.##");
+        System.out.println("Salários em salários mínimos:");
+
+        for (Funcionario funcionario : listaFuncionarios) {
+            BigDecimal salarioEmSalariosMinimos = funcionario.getSalario() / salarioMinimo;
+            System.out.println(funcionario.getNome() + ": " + df.format(salarioEmSalariosMinimos) + " 			salários mínimos");
+        }
+}
+
+public static void inserirFuncionarios(List<Funcionario> lista, String nome, LocalDate dataNascimento, BigDecimal salario, String funcao) {
+	Funcionario novoFuncionario = new Funcionario(nome, dataNascimento, salario, funcao);
+	lista.add(novoFuncionario);
+}
+
+public static void removerFuncionarios(List<Funcionario> lista, String nome) {
+	Iterator<Funcionario> iterator = lista.iterator();
+	while (iterator.hasNext()) {
+	Funcionario funcionario = iterator.next();
+	if (funcionario.getNome().equals(nome)) {
+		iterator.remove();
+		}
+	}
+}
+
+public static void exibirFuncionarios(List<Funcionario> lista) {
+	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	DecimalFormat df = new DecimalFormat("#.###,##");	
+
+	for (Funcionario funcionario : lista) {
+		System.out.println("Nome: " + funcionario.getNome());
+		System.out.println("Data de Nascimento: " + sdf.format(funcionario.getDataNascimento()));
+		System.out.println("Salário: " + df.format(funcionario.getSalario()));
+		System.out.println("Função: " + funcionario.getFuncao());
+		System.out.println();
+	}
+}
+
+public void aumentoSalario(BigDecimal aumento) {
+	this.salario += aumento;
+}
+
+public BigDecimal getSalario() {
+	return salario;
+}
+
+public void setSalario(BigDecimal salario) {
+	this.salario = salario;
+}
+
+public String getNome() {
+        return nome;
+    }
+
+public void setNome(String nome) {
+        this.nome = nome;
+}
+
+public String getFuncao() {
+        return funcao;
+    }
+
+public void setFuncao(String funcao) {
+        this.funcao = funcao;
+}
+
+public Date getDataNascimento() {
+        return dataNascimento;
+}
+
+public void setDataNascimento(Date dataNascimento) {
+        this.dataNascimento = dataNascimento;
+}
+
+public static Map<String, List<Funcionario>> agruparFuncionario(List<Funcionario> listaFuncionarios) {
+	Map<String, List<Funcionario>> funcionariosFuncao = new HashMap<>();
+
+	for (Funcionario funcionario : listaFuncionarios) {
+		String funcao = funcionario.getFuncao();
+		if(!funcionariosFuncao.containsKey(funcao)) {
+			funcionariosFuncao.put(funcao, new ArrayList<>());
+		}
+		funcionariosFuncao.get(funcao).add(funcionario);
+	}
+	return funcionariosFuncao;
+}
+
+public static void funcionariosAniversariantes(List<Funcionario> listaFuncionarios, int... meses) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
+        for (Funcionario funcionario : listaFuncionarios) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(funcionario.getDataNascimento());
+            int mesAniversario = cal.get(Calendar.MONTH) + 1;
+
+            for (int mes : meses) {
+                if (mes == mesAniversario) {
+                    System.out.println("Nome: " + funcionario.getNome());
+                    System.out.println("Data de Nascimento: " + sdf.format(funcionario.getDataNascimento()));
+                    System.out.println("Mês de Aniversário: " + mes);
+                    System.out.println();
+                    break;
+                }
+            }
+        }
+    }
+
+public static Funcionario encontrarFuncionarioMaisVelho(List<Funcionario> listaFuncionarios) {
+        Funcionario maisVelho = null;
+
+        for (Funcionario funcionario : listaFuncionarios) {
+            if (maisVelho == null || funcionario.getDataNascimento().before(maisVelho.getDataNascimento())) {
+                maisVelho = funcionario;
+            }
+        }
+
+        return maisVelho;
+    }
+
+public static BigDecimal calcularSomaSalarios(List<Funcionario> listaFuncionarios) {
+        BigDecimal somaSalarios = 0.0;
+
+        for (Funcionario funcionario : listaFuncionarios) {
+            somaSalarios += funcionario.getSalario();
+        }
+
+        return somaSalarios;
+    }
